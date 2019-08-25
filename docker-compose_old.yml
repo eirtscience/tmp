@@ -1,0 +1,33 @@
+version: '2.1'
+
+services:
+        web:
+                build: ./api-service
+                volumes:
+                    - ./api-service:/code
+                
+                ports:
+                    - "82:8000"
+
+                links:
+                    - data_db
+                    - user_db
+                        
+
+        user_db:
+                image: mongo:latest
+                volumes: 
+                    - /data/userdb:/data/db
+                environment:
+                        - MONGO_DATA_DIR=/data/db
+                        - MONGO_LOG_DIR=/dev/null
+                command: mongod --smallfiles --logpath=/dev/null
+
+        data_db:
+                image: mongo:latest
+                volumes: 
+                    - /data/datadb:/data/db
+                environment:
+                        - MONGO_DATA_DIR=/data/db
+                        - MONGO_LOG_DIR=/dev/null
+                command: mongod --smallfiles --logpath=/dev/null

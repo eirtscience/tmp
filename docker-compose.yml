@@ -1,0 +1,78 @@
+version: "3.2"
+services:
+  ui-api:
+    build: '../blackcreek-api/blackcreek-api_service/ui-service/'
+    restart: always
+    networks:
+      - backend
+      - ui-api
+    volumes:
+      - ../blackcreek-api/blackcreek-api_service/ui-service/xproject/:/var/www/html/
+    ports:
+      - "8082:80"
+    links:
+      - blackcreek_db
+
+  admin-api:
+     build: "../blackcreek-api/blackcreek-api_service/admin-service/"
+     restart: always
+     networks:
+       - backend
+       - admin-api
+     volumes:
+       - ../blackcreek-api/blackcreek-api_service/admin-service/xproject/:/var/www/html/
+     ports:
+       - "8083:80"
+     links:
+       - blackcreek_db
+
+  admin-service:
+          build: "../blackcreek_admin_service/"
+          volumes: 
+              - ../blackcreek_admin_service:/code
+          ports:
+              - "8080:8000"
+          networks:
+               - backend
+                
+  data_provider_client:
+          build: "../blackcreek_data_provider_client"
+          volumes:
+             - ../blackcreek_data_provider_client:/code
+          ports:
+              - "8081:8000"
+          networks:
+              - backend
+
+  api-doc:
+     build: "../blackcreek-api/blackcreek-api_service/apidoc-service/"
+     restart: always
+     volumes:
+       - ../blackcreek-api/blackcreek-api_service/apidoc-service/doc/:/usr/share/nginx/html/
+       - ../blackcreek-api/blackcreek-api_service/apidoc-service/doc/:/var/www/html/
+     networks:
+       - doc
+     ports:
+       - "8090:90"
+
+  admin_db:
+     image: mysql:5.6.40
+     networks: 
+       - admin-api
+     environment:
+       - MYSQL_ROOT_PASSWORD=xproject
+       - MYSQL_DATABASE=xproject
+
+  blackcreek_db:
+    image: mysql:5.6.40
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=xproject
+      - MYSQL_DATABASE=xproject
+networks:
+  backend:
+  ui-api:
+  admin-api:
+  doc:
+
