@@ -28,17 +28,19 @@ services:
 
   admin-service:
           build: "../blackcreek_admin_service/"
+          restart: always
           volumes: 
-              - ../blackcreek_admin_service:/code
+              - ../blackcreek_admin_service/:/code
           ports:
               - "8080:8000"
           networks:
                - backend
                 
   data_provider_client:
-          build: "../blackcreek_data_provider_client"
+          build: "../blackcreek-data_provider_client/"
+          restart: always
           volumes:
-             - ../blackcreek_data_provider_client:/code
+             - ../blackcreek-data_provider_client/:/code
           ports:
               - "8081:8000"
           networks:
@@ -62,6 +64,17 @@ services:
      environment:
        - MYSQL_ROOT_PASSWORD=xproject
        - MYSQL_DATABASE=xproject
+
+  static_file_handler:
+          build: "../blackcreek_static_file_handler/"
+          restart: always
+          volumes:
+                - ../blackcreek_static_file_handler/web/:/usr/share/nginx/html/
+                - ../blackcreek_static_file_handler/web/:/var/www/html/
+          ports:
+               - "8091:90"
+          networks:
+              - backend
 
   blackcreek_db:
     image: mysql:5.6.40
