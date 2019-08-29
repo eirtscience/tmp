@@ -1,0 +1,9 @@
+version : "3.3"
+
+services:
+      celery:
+          build: .
+          command: ["celery","-E","-A","email_application","worker","-l","info"]
+          volumes:
+               - ./email_application/:/code/
+          
